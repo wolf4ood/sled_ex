@@ -1,0 +1,20 @@
+[package]
+name = "sled_ex"
+version = "0.1.0"
+authors = ["Enrico Risa <enrico.risa@gmail.com>"]
+edition = "2018"
+
+
+[lib]
+name = "sled_ex"
+path = "src/lib.rs"
+crate-type = ["dylib"]
+
+[dependencies]
+rustler = "0.20.0"
+rustler_codegen = "0.20.0"
+lazy_static = "1.0"
+sled = "0.24.1"
+err-derive = "0.1"
+
+
