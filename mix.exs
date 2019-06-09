@@ -8,6 +8,7 @@ defmodule Sled.MixProject do
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       compilers: [:rustler] ++ Mix.compilers(),
+      test_coverage: [tool: ExCoveralls],
       deps: deps(),
       rustler_crates: [
         sled_ex: [
@@ -27,7 +28,8 @@ defmodule Sled.MixProject do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:rustler, "~> 0.20.0"}
+      {:rustler, "~> 0.20.0"},
+      {:excoveralls, "~> 0.7", only: :test},
     ]
   end
 end
