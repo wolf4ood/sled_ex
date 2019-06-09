@@ -22,6 +22,8 @@ before_install:
 
 install:
   - source $HOME/.cargo/env
+  - mix local.hex --force
+
 
 
 script:
