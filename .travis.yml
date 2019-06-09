@@ -21,6 +21,7 @@ before_install:
   - curl https://sh.rustup.rs -sSf | sh -s -- -y
 
 install:
+  - mix local.rebar --force
   - source $HOME/.cargo/env
   - mix local.hex --force
   - mix deps.get
