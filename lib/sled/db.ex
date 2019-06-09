@@ -4,6 +4,6 @@ defmodule Sled.DB do
     alias Sled.DB
 
     def wrap(db) do
-        %DB { db: db, codec: Sled.Utils}
+        %DB { db: db, codec: Sled.Codec}
     end
 end
