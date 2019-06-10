@@ -8,13 +8,13 @@ defmodule Sled.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       compilers: [:rustler] ++ Mix.compilers(),
-      test_coverage: [tool: ExCoveralls], 
+      test_coverage: [tool: ExCoveralls],
       deps: deps(),
       rustler_crates: [
         sled_ex: [
-          mode: (if Mix.env() == :prod, do: :release, else: :debug)
+          mode: if(Mix.env() == :prod, do: :release, else: :debug)
         ]
-      ],
+      ]
     ]
   end
 
@@ -29,7 +29,7 @@ defmodule Sled.MixProject do
   defp deps do
     [
       {:rustler, "~> 0.20.0"},
-      {:excoveralls, "~> 0.7", only: :test},
+      {:excoveralls, "~> 0.7", only: :test}
     ]
   end
 end

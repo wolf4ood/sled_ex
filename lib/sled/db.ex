@@ -1,9 +1,11 @@
 defmodule Sled.DB do
-    defstruct [:db, :codec]
+  defstruct [:db, :codec]
 
-    alias Sled.DB
+  alias Sled.DB
 
-    def wrap(db) do
-        %DB { db: db, codec: Sled.Codec}
-    end
+  def wrap(db, codec \\ Sled.Codec.Default) do
+    codec = codec || Sled.Codec.Default
+
+    %DB{db: db, codec: codec}
+  end
 end
