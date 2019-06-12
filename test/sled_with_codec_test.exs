@@ -3,7 +3,7 @@ defmodule SledTestWithCodec do
   doctest Sled
 
   setup_all do
-    path = Path.join(__DIR__, "test.sled")
+    path = Path.join(__DIR__, "test_codec.sled")
 
     {:ok, db} = Sled.open(path, codec: Sled.Codec.Term)
 
