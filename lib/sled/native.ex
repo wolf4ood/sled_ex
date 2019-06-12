@@ -8,4 +8,8 @@ defmodule Sled.Native do
   def del(_ref, _key), do: :erlang.nif_error(:nif_not_loaded)
 
   def set(_ref, _key, _value), do: :erlang.nif_error(:nif_not_loaded)
+
+  def scan(_ref, _key, _opts), do: :erlang.nif_error(:nif_not_loaded)
+
+  def iter_next(_ref), do: :erlang.nif_error(:nif_not_loaded)
 end

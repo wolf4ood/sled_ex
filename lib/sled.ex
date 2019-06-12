@@ -20,4 +20,11 @@ defmodule Sled do
   def del(%{db: db, codec: codec}, key) do
     Sled.Native.del(db, codec.encode(key))
   end
+
+  def scan(%{db: db, codec: codec}, key, opts \\ []) do
+    with {:ok, cursor} <- Sled.Native.scan(db, codec.encode(key), opts),
+         handle <- Sled.Cursor.wrap(cursor, codec) do
+      {:ok, handle}
+    end
+  end
 end

@@ -40,4 +40,15 @@ defmodule SledTest do
 
     assert :not_found == Sled.get(db, "key")
   end
+
+  test "should scan keys", %{db: db} do
+    Enum.each(1..9, &(:ok = Sled.set(db, to_string(&1), to_string(&1))))
+
+    assert {:ok, "1"} == Sled.get(db, "1")
+
+    assert {:ok, cursor} = Sled.scan(db, "1")
+
+    assert Enum.to_list(1..9) |> Enum.map(fn x -> {to_string(x), to_string(x)} end) ==
+             cursor |> Enum.into([])
+  end
 end
