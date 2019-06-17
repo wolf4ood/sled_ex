@@ -2,7 +2,7 @@ defmodule SledTest do
   use ExUnit.Case
   doctest Sled
 
-  setup_all do
+  setup do
     path = Path.join(__DIR__, "test.sled")
 
     {:ok, db} = Sled.open(path)

@@ -2,7 +2,7 @@ defmodule SledTestWithCodec do
   use ExUnit.Case
   doctest Sled
 
-  setup_all do
+  setup do
     path = Path.join(__DIR__, "test_codec.sled")
 
     {:ok, db} = Sled.open(path, codec: Sled.Codec.Term)
@@ -51,5 +51,16 @@ defmodule SledTestWithCodec do
     assert :ok == Sled.del(db, "key")
 
     assert :not_found == Sled.get(db, "key")
+  end
+
+  test "should scan keys", %{db: db} do
+    Enum.each(1..9, &(:ok = Sled.set(db, &1, &1)))
+
+    assert {:ok, 1} == Sled.get(db, 1)
+
+    assert {:ok, cursor} = Sled.scan(db, 1)
+
+    assert Enum.to_list(1..9) |> Enum.map(fn x -> {x, x} end) ==
+             cursor |> Enum.into([])
   end
 end
