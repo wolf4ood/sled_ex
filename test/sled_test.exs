@@ -51,4 +51,16 @@ defmodule SledTest do
     assert Enum.to_list(1..9) |> Enum.map(fn x -> {to_string(x), to_string(x)} end) ==
              cursor |> Enum.into([])
   end
+
+
+  test "should scan keys reverse", %{db: db} do
+    Enum.each(1..9, &(:ok = Sled.set(db, to_string(&1), to_string(&1))))
+
+    assert {:ok, "1"} == Sled.get(db, "1")
+
+    assert {:ok, cursor} = Sled.scan(db, "2",[reverse: true])
+
+    assert Enum.to_list(1..2) |> Enum.map(fn x -> {to_string(x), to_string(x)} end) |> Enum.reverse() ==
+             cursor |> Enum.into([])
+  end
 end

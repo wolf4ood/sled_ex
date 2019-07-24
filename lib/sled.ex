@@ -22,9 +22,13 @@ defmodule Sled do
   end
 
   def scan(%{db: db, codec: codec}, key, opts \\ []) do
-    with {:ok, cursor} <- Sled.Native.scan(db, codec.encode(key), opts),
+    with {:ok, cursor} <- Sled.Native.scan(db, codec.encode(key), to_map(opts)),
          handle <- Sled.Cursor.wrap(cursor, codec) do
       {:ok, handle}
     end
   end
+
+  defp to_map(map) when is_map(map), do: map
+  defp to_map([]), do: %{}
+  defp to_map(enum), do: Enum.into(enum, %{})
 end

@@ -40,12 +40,20 @@ impl DBHandle {
         Ok(())
     }
 
-    fn scan(&self, key: Binary) -> SledExResult<Cursor> {
+    fn scan(&self, key: Binary, reverse: bool) -> SledExResult<Cursor> {
         let iter = self.0.scan(key.as_slice());
 
-        let eternal_iter: Iter<'static> = unsafe { std::mem::transmute(iter) };
-
-        Ok(Cursor(Mutex::new(eternal_iter)))
+        match reverse {
+            true => {
+                let eternal_iter: std::iter::Rev<Iter<'static>> =
+                    unsafe { std::mem::transmute(iter.rev()) };
+                Ok(Cursor::RevIter(Mutex::new(eternal_iter)))
+            }
+            false => {
+                let eternal_iter: Iter<'static> = unsafe { std::mem::transmute(iter) };
+                Ok(Cursor::Iter(Mutex::new(eternal_iter)))
+            }
+        }
     }
 }
 
@@ -92,7 +100,10 @@ pub fn scan<'a>(env: Env<'a>, args: &[Term<'a>]) -> NifResult<Term<'a>> {
 
     let key: Binary = args[1].decode()?;
 
-    let cursor = db.scan(key)?;
+    let cursor = match args[2].map_get(atoms::reverse().to_term(env)) {
+        Ok(e) => db.scan(key, e.decode()?)?,
+        _ => db.scan(key, false)?,
+    };
 
     let resource = ResourceArc::new(cursor);
 
@@ -118,15 +129,25 @@ pub fn iter_next<'a>(env: Env<'a>, args: &[Term<'a>]) -> NifResult<Term<'a>> {
     }
 }
 
-pub struct Cursor(Mutex<sled::Iter<'static>>);
+pub enum Cursor {
+    Iter(Mutex<sled::Iter<'static>>),
+    RevIter(Mutex<std::iter::Rev<sled::Iter<'static>>>),
+}
 
 impl Cursor {
     fn next(&self) -> Option<SledExResult<(Vec<u8>, IVec)>> {
-        self.0
-            .lock()
-            .unwrap()
-            .next()
-            .map(|v| v.map_err(SledExError::from))
+        match self {
+            Cursor::Iter(i) => i
+                .lock()
+                .unwrap()
+                .next()
+                .map(|v| v.map_err(SledExError::from)),
+            Cursor::RevIter(i) => i
+                .lock()
+                .unwrap()
+                .next()
+                .map(|v| v.map_err(SledExError::from)),
+        }
     }
 }
 
